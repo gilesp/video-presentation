@@ -53,3 +53,4 @@ top left (x=30, y=30), and the speaker video is scaled to 566x318 and
 placed in the top right (x=1335, y=30).
 
 TODO: Make the position and size of the video configurable.
+TODO: Hardware accellerate this step.
