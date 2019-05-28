@@ -1,0 +1,55 @@
+* Video Presentation Helper Scripts
+
+This repository contains some scripts to aid in recording a
+presentation and then combining the results into a single video of the
+slides and speaker.
+
+The aim is to record the desktop, to capture the presentation in
+high-fidelity, and to also video the presenter/speaker with a camera.
+The two videos can then be combined into one, with a template used for
+the background.
+
+** Record Desktop (Wayland support)
+
+Recording a linux desktop is pretty simple if you're using x11, but
+since moving to wayland, most existing tools will just capture a black
+screen. Instead, you need to either hook into the gnome dbus screen
+recording mechanism (using something like green-recorder), or better
+still capture from the drm kms video device directly.
+
+ffmpeg has support for kms capture, so that that's what I've used. The
+trickiest part is telling it which screen to record if you have a
+multi monitor setup.
+
+~./wayland-capture.sh <output_filename>~ will invoke the script, first
+prompting you to select the monitor to record
+
+It uses VAAPI for hardware accelleration (realitically limiting it to
+intel graphics cards), so it shouldn't slow your machine down much
+while presenting.
+
+** Capture video of the presenter
+
+Use an ordinary video camera to capture the presenter/speaker while
+they give the presentation, then transfer the recording to your
+computer.
+
+TODO: Implement a script to capture the presenter via a webcam
+
+** Create combined video
+
+Prior to this step, you'll want to edit your video files so that they
+start and end at the same point.
+
+You'll need to prepare a template image file (1920x1080, jpg or png)
+that will be the base of your final video. You can use this to display
+the title of the presentation and company logo etc.
+
+~./combine.sh --template <templatefile> --speaker <speaker_video> --presentation <presentation_video> <output_filename>~
+
+This command will stack your videos on top of the template image, so
+that the presentation video is scaled to 1280x720 and placed in the
+top left (x=30, y=30), and the speaker video is scaled to 566x318 and
+placed in the top right (x=1335, y=30).
+
+TODO: Make the position and size of the video configurable.
