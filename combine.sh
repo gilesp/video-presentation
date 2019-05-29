@@ -72,5 +72,3 @@ ffmpeg -y \
        -i "${speaker_video}" \
        -filter_complex "[1]scale=1280x720[slides]; [2]scale=566x318[speaker]; [0][slides]overlay=x=30:y=30:shortest=1[main]; [main][speaker]overlay=x=1335:y=30:shortest=1" \
        ${output_file}
-
-#-filter_complex "[0:v]setpts=PTS-STARTPTS[V1]; [1:v]setpts=PTS-STARTPTS, [2:v]setpts=PTS-STARTPTS, scale=800:452[V2]; [V1][V2]overlay=shortest=1:x=240:y=134" \
