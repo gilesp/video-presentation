@@ -62,7 +62,6 @@ ffmpeg \
     -f pulse \
     -channels 1 \
     -i ${microphone} \
-    -ac 1 \
     "${output_file}"
 
 # sudo ffmpeg \
