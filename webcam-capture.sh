@@ -52,30 +52,39 @@ output_file="$1"
 webcam=$(select_webcam)
 microphone=$(select_microphone)
 
-ffmpeg \
-    -threads:v 2 -threads:a 8 -filter_threads 2 \
-    -f v4l2 \
-    -video_size 640x480 \
-    -framerate 30 \
-    -i ${webcam} \
-    -thread_queue_size 1024 \
-    -f pulse \
-    -channels 1 \
-    -i ${microphone} \
-    "${output_file}"
+# Tell the webcam we live in a 50hz power area (removes flicker)
+v4l2-ctl --device=${webcam} -c power_line_frequency=1 
 
-# sudo ffmpeg \
+
+#
+# convert on the fly.
+#
+# ffmpeg \
 #     -f v4l2 \
 #     -video_size 640x480 \
 #     -framerate 30 \
+#     -input_format yuyv422 \
 #     -i ${webcam} \
 #     -f pulse \
-#     -channels 1 \
-#     -i "${microphone}" \
-#     -vaapi_device /dev/dri/renderD128 \
-#     -filter:v hwmap,scale_vaapi=w=640:h=480:format=nv12 \
-#     -c:v h264_vaapi \
-#     -profile:v constrained_baseline \
-#     -level:v 3.1 \
-#     -b:v 20000k \
-#     "${output_file}"
+#     -channels 2 \
+#     -i ${microphone} \
+#     -c h264 \
+#     -acodec aac -ab 128k \
+#     "${output_file}".mp4
+
+#
+# Speed version - no conversion, just capture raw input
+#
+# WARNING: This will produce massive files!
+ffmpeg \
+    -f v4l2 \
+    -video_size 640x480 \
+    -framerate 30 \
+    -input_format yuyv422 \
+    -i ${webcam} \
+    -f pulse \
+    -channels 2 \
+    -i ${microphone} \
+    -c copy \
+    -acodec copy \
+    "${output_file}".mkv
